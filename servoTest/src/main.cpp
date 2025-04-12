@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
 
+Servo servo1;
+
 // put function declarations here:
 int myFunction(int, int);
 
