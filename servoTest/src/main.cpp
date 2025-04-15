@@ -15,16 +15,16 @@ void setup() {
 
 void loop() {
 
-  delay(2000);      // 2 seconds delay
+  delay(500);      //  a half second delay
   servo1.write(90); // sets the servo angle to 90 degrees
 
-  delay(2000);      // 2 seconds delay
+  delay(500);      // a half second delay
   servo1.write(180);// sets the servo angle to 180 degrees
 
-  delay(2000);      // 2 seconds delay
+  delay(500);      // a half second delay
   servo1.write(90); // sets the servo angle to 90 degrees
 
-  delay(2000);      // 2 seconds delay
+  delay(500);      // a half second delay
   servo1.write(0);  // sets the servo angle to 0 degrees
 
 }
