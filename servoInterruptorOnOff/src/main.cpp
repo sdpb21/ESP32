@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <WiFi.h>
+//#include <WiFi.h>
 #include <WebServer.h>
 
 const char* ssid="******";    // soft access point name
@@ -10,6 +10,9 @@ IPAddress gateway(192, 168, 4, 9);  // soft access point gateway
 IPAddress subnet(255, 255, 255, 0); // soft access point subnet mask
 
 WebServer server(80);   // WebServer object created
+
+// Output pins
+const byte servo1PinData = 19;    // output pin for servo 1
 
 void setup() {
   // put your setup code here, to run once:
