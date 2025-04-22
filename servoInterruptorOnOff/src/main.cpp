@@ -1,5 +1,5 @@
 #include <Arduino.h>
-//#include <WiFi.h>
+#include <WiFi.h>
 #include <WebServer.h>
 
 const char* ssid="******";    // soft access point name
@@ -16,6 +16,7 @@ const byte servo1PinData = 19;    // output pin for servo 1
 
 void setup() {
   // put your setup code here, to run once:
+  pinMode(servo1PinData, OUTPUT);   // servo1PinData pin configured as output
 
 }
 
