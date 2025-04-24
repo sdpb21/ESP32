@@ -18,6 +18,7 @@ const byte servo2PinData = 5;     // output pin for servo 2
 void setup() {
   // put your setup code here, to run once:
   pinMode(servo1PinData, OUTPUT);   // servo1PinData pin configured as output
+  pinMode(servo2PinData, OUTPUT);   // servo2PinData pin configured as output
 
 }
 
