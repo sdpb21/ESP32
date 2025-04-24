@@ -13,6 +13,7 @@ WebServer server(80);   // WebServer object created
 
 // Output pins
 const byte servo1PinData = 19;    // output pin for servo 1
+const byte servo2PinData = 5;     // output pin for servo 2
 
 void setup() {
   // put your setup code here, to run once:
