@@ -20,6 +20,8 @@ void setup() {
   pinMode(servo1PinData, OUTPUT);   // servo1PinData pin configured as output
   pinMode(servo2PinData, OUTPUT);   // servo2PinData pin configured as output
 
+  WiFi.softAP(ssid, password);      // creates the access point
+
 }
 
 void loop() {
