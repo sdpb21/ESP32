@@ -25,6 +25,7 @@ void setup() {
   WiFi.softAPConfig(ip, gateway, subnet);   // configures soft access point
 
   server.on("/", handleConnectionRoot);
+  server.on("/turnOn", handleTurnOn);     // event to turn on the light
 
 }
 
@@ -35,6 +36,13 @@ void loop() {
 String answer = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>My Page</title>\n</head>\n<body>\n    <div class=\"container\">\n        <h1>Welcome to My Page</h1>\n        <p>This is a sample HTML page. Edit the code to create your HTML.</p>\n        \n    </div>\n</body>\n</html>";
 
 void handleConnectionRoot(){
+
+  server.send(200, "text/html", answer);
+
+}
+
+// Function for the event to turn on the light
+void handleTurnOn(){
 
   server.send(200, "text/html", answer);
 
