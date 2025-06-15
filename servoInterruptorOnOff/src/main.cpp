@@ -24,8 +24,9 @@ void setup() {
   //IPAddress ip = WiFi.softAPIP();   // getting the soft access point IP
   WiFi.softAPConfig(ip, gateway, subnet);   // configures soft access point
 
-  server.on("/", handleConnectionRoot);
-  server.on("/turnOn", handleTurnOn);     // event to turn on the light
+  server.on("/", handleConnectionRoot);   // if root address is consulted, execute handleConnectionRoot function
+  server.on("/turnOn", handleTurnOn);     // if /turnOn address is consulted, execute handleTurnOn function
+  server.on("/turnOff", handleTurnOff);   // if /turnOff address is consulted, exevute handleTurnOff function
 
 }
 
