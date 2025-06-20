@@ -6,7 +6,7 @@
 #include <sys/param.h>
 #include "esp_netif.h"
 #include "esp_eth.h"
-#include "protocol_examples_common.h"
+//#include "protocol_examples_common.h"
 #include <esp_https_server.h>
 #include "esp_tls.h"
 #include <string.h>
@@ -27,8 +27,12 @@ const char* password="****";  // soft access point password
 //WebServer server(80);   // WebServer object created
 
 // Output pins
-const byte servo1PinData = 19;    // output pin for servo 1
-const byte servo2PinData = 5;     // output pin for servo 2
+//const byte servo1PinData = 19;    // output pin for servo 1
+//const byte servo2PinData = 5;     // output pin for servo 2
+
+esp_err_t init_led(void){
+  gpio_config_t pGPIOConfig;  // typedef struct to configure pin or pins features
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -47,9 +51,10 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  ESP_ERROR_CHECK(init_led());
 }
 
-String answer = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>My Page</title>\n</head>\n<body>\n    <div class=\"container\">\n        <h1>Welcome to My Page</h1>\n        <p>This is a sample HTML page. Edit the code to create your HTML.</p>\n        \n    </div>\n</body>\n</html>";
+//String answer = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>My Page</title>\n</head>\n<body>\n    <div class=\"container\">\n        <h1>Welcome to My Page</h1>\n        <p>This is a sample HTML page. Edit the code to create your HTML.</p>\n        \n    </div>\n</body>\n</html>";
 
 /*void handleConnectionRoot(){
 
