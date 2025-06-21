@@ -13,6 +13,9 @@
 #include "driver/gpio.h"
 #include <stdio.h>
 
+#define servoPinData1 19
+#define servoPinData2 5
+
 //#include <Arduino.h>
 //#include <WiFi.h>
 //#include <WebServer.h>
@@ -32,6 +35,7 @@ const char* password="****";  // soft access point password
 
 esp_err_t init_led(void){
   gpio_config_t pGPIOConfig;  // typedef struct to configure pin or pins features
+  pGPIOConfig.pin_bit_mask = 
 }
 
 void setup() {
