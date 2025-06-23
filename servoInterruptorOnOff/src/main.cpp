@@ -33,9 +33,9 @@ const char* password="****";  // soft access point password
 //const byte servo1PinData = 19;    // output pin for servo 1
 //const byte servo2PinData = 5;     // output pin for servo 2
 
-esp_err_t init_led(void){
+esp_err_t init_servo_pins(void){
   gpio_config_t pGPIOConfig;  // typedef struct to configure pin or pins features
-  pGPIOConfig.pin_bit_mask = 
+  pGPIOConfig.pin_bit_mask = (1 << servoPinData1) | (1 << servoPinData2);   // set the data pins for servos
 }
 
 void setup() {
