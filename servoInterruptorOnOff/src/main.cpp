@@ -34,9 +34,10 @@ const char* password="****";  // soft access point password
 //const byte servo2PinData = 5;     // output pin for servo 2
 
 esp_err_t init_servo_pins(void){
-  gpio_config_t pGPIOConfig;  // typedef struct to configure pin or pins features
+  gpio_config_t pGPIOConfig;                                                // typedef struct to configure pin or pins features
   pGPIOConfig.pin_bit_mask = (1 << servoPinData1) | (1 << servoPinData2);   // set the data pins for servos
-  pGPIOConfig.mode = GPIO_MODE_DEF_OUTPUT;  // pins configured as outputs
+  pGPIOConfig.mode = GPIO_MODE_OUTPUT;                                      // pins configured as outputs
+  pGPIOConfig.pull_down_en = GPIO_PULLDOWN_DISABLE;                         // GPIO pull-down resistor disabled
 }
 
 void setup() {
@@ -56,7 +57,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  ESP_ERROR_CHECK(init_led());
+  ESP_ERROR_CHECK(init_servo_pins());
 }
 
 //String answer = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>My Page</title>\n</head>\n<body>\n    <div class=\"container\">\n        <h1>Welcome to My Page</h1>\n        <p>This is a sample HTML page. Edit the code to create your HTML.</p>\n        \n    </div>\n</body>\n</html>";
