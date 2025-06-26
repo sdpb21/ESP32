@@ -15,6 +15,8 @@
 
 //Servo servo1;
 
+esp_err_t set_timer(void);
+
 void setup() {
 /*
   servo1.attach(servoDataPin);  // attach or "link" the pin to the servo
@@ -37,4 +39,10 @@ void loop() {
   delay(500);      // a half second delay
   servo1.write(0);  // sets the servo angle to 0 degrees
 */
+}
+
+esp_err_t set_timer(void){
+
+  return ESP_OK;
+
 }
