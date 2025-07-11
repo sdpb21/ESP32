@@ -1,11 +1,3 @@
-/* Blink Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -15,91 +7,140 @@
 #include "sdkconfig.h"
 #include "freertos/timers.h"
 
-static const char *TAG = "example";
+/**
+ * TimerHandle_t xTimerCreate(  const char * const pcTimerName,
+ *                              TickType_t xTimerPeriodInTicks,
+ *                              BaseType_t xAutoReload,
+ *                              void * pvTimerID,
+ *                              TimerCallbackFunction_t pxCallbackFunction );
+ *
+ * Creates a new software timer instance, and returns a handle by which the
+ * created software timer can be referenced.
+ *
+ * Internally, within the FreeRTOS implementation, software timers use a block
+ * of memory, in which the timer data structure is stored.  If a software timer
+ * is created using xTimerCreate() then the required memory is automatically
+ * dynamically allocated inside the xTimerCreate() function.  (see
+ * https://www.FreeRTOS.org/a00111.html).  If a software timer is created using
+ * xTimerCreateStatic() then the application writer must provide the memory that
+ * will get used by the software timer.  xTimerCreateStatic() therefore allows a
+ * software timer to be created without using any dynamic memory allocation.
+ *
+ * Timers are created in the dormant state.  The xTimerStart(), xTimerReset(),
+ * xTimerStartFromISR(), xTimerResetFromISR(), xTimerChangePeriod() and
+ * xTimerChangePeriodFromISR() API functions can all be used to transition a
+ * timer into the active state.
+ *
+ * @param pcTimerName A text name that is assigned to the timer.  This is done
+ * purely to assist debugging.  The kernel itself only ever references a timer
+ * by its handle, and never by its name.
+ *
+ * @param xTimerPeriodInTicks The timer period.  The time is defined in tick
+ * periods so the constant portTICK_PERIOD_MS can be used to convert a time that
+ * has been specified in milliseconds.  For example, if the timer must expire
+ * after 100 ticks, then xTimerPeriodInTicks should be set to 100.
+ * Alternatively, if the timer must expire after 500ms, then xPeriod can be set
+ * to ( 500 / portTICK_PERIOD_MS ) provided configTICK_RATE_HZ is less than or
+ * equal to 1000.  Time timer period must be greater than 0.
+ *
+ * @param xAutoReload If xAutoReload is set to pdTRUE then the timer will
+ * expire repeatedly with a frequency set by the xTimerPeriodInTicks parameter.
+ * If xAutoReload is set to pdFALSE then the timer will be a one-shot timer and
+ * enter the dormant state after it expires.
+ *
+ * @param pvTimerID An identifier that is assigned to the timer being created.
+ * Typically this would be used in the timer callback function to identify which
+ * timer expired when the same callback function is assigned to more than one
+ * timer.
+ *
+ * @param pxCallbackFunction The function to call when the timer expires.
+ * Callback functions must have the prototype defined by TimerCallbackFunction_t,
+ * which is "void vCallbackFunction( TimerHandle_t xTimer );".
+ *
+ * @return If the timer is successfully created then a handle to the newly
+ * created timer is returned.  If the timer cannot be created because there is
+ * insufficient FreeRTOS heap remaining to allocate the timer
+ * structures then NULL is returned.
+ *
+ * Example usage:
+ * @verbatim
+ */ #define NUM_TIMERS 5
 
-/* Use project configuration menu (idf.py menuconfig) to choose the GPIO to blink,
-   or you can edit the following line and set a number here.
-*/
-#define BLINK_GPIO CONFIG_BLINK_GPIO
+ // An array to hold handles to the created timers.
+ TimerHandle_t xTimers[ NUM_TIMERS ];
 
-static uint8_t s_led_state = 0;
+ // An array to hold a count of the number of times each timer expires.
+ int32_t lExpireCounters[ NUM_TIMERS ] = { 0 };
 
-#ifdef CONFIG_BLINK_LED_STRIP
+ // Define a callback function that will be used by multiple timer instances.
+ // The callback function does nothing but count the number of times the
+ // associated timer expires, and stop the timer once the timer has expired
+ // 10 times.
+ void vTimerCallback( TimerHandle_t pxTimer )
+ {
+ int32_t lArrayIndex;
+ const int32_t xMaxExpiryCountBeforeStopping = 10;
 
-static led_strip_handle_t led_strip;
+     // Optionally do something if the pxTimer parameter is NULL.
+     configASSERT( pxTimer );
 
-static void blink_led(void)
+     // Which timer expired?
+     lArrayIndex = ( int32_t ) pvTimerGetTimerID( pxTimer );
+
+     // Increment the number of times that pxTimer has expired.
+     lExpireCounters[ lArrayIndex ] += 1;
+
+     // If the timer has expired 10 times then stop it from running.
+     if( lExpireCounters[ lArrayIndex ] == xMaxExpiryCountBeforeStopping )
+     {
+         // Do not use a block time if calling a timer API function from a
+         // timer callback function, as doing so could cause a deadlock!
+         xTimerStop( pxTimer, 0 );
+     }
+ }
+
+void main( void )
 {
-    /* If the addressable LED is enabled */
-    if (s_led_state) {
-        /* Set the LED pixel using RGB from 0 (0%) to 255 (100%) for each color */
-        led_strip_set_pixel(led_strip, 0, 16, 16, 16);
-        /* Refresh the strip to send data */
-        led_strip_refresh(led_strip);
-    } else {
-        /* Set all LED off to clear all pixels */
-        led_strip_clear(led_strip);
-    }
+int32_t x;
+
+     // Create then start some timers.  Starting the timers before the scheduler
+     // has been started means the timers will start running immediately that
+     // the scheduler starts.
+     for( x = 0; x < NUM_TIMERS; x++ )
+     {
+         xTimers[ x ] = xTimerCreate(    "Timer",             // Just a text name, not used by the kernel.
+                                         ( 100 * ( x + 1 ) ), // The timer period in ticks.
+                                         pdTRUE,              // The timers will auto-reload themselves when they expire.
+                                         ( void * ) x,        // Assign each timer a unique id equal to its array index.
+                                         vTimerCallback       // Each timer calls the same callback when it expires.
+                                     );
+
+         if( xTimers[ x ] == NULL )
+         {
+             // The timer was not created.
+         }
+         else
+         {
+             // Start the timer.  No block time is specified, and even if one was
+             // it would be ignored because the scheduler has not yet been
+             // started.
+             if( xTimerStart( xTimers[ x ], 0 ) != pdPASS )
+             {
+                 // The timer could not be set into the Active state.
+             }
+         }
+     }
+
+     // ...
+     // Create tasks here.
+     // ...
+
+     // Starting the scheduler will start the timers running as they have already
+     // been set into the active state.
+     vTaskStartScheduler();
+
+     // Should not reach here.
+     for( ;; );
 }
-
-static void configure_led(void)
-{
-    ESP_LOGI(TAG, "Example configured to blink addressable LED!");
-    /* LED strip initialization with the GPIO and pixels number*/
-    led_strip_config_t strip_config = {
-        .strip_gpio_num = BLINK_GPIO,
-        .max_leds = 1, // at least one LED on board
-    };
-#if CONFIG_BLINK_LED_STRIP_BACKEND_RMT
-    led_strip_rmt_config_t rmt_config = {
-        .resolution_hz = 10 * 1000 * 1000, // 10MHz
-        .flags.with_dma = false,
-    };
-    ESP_ERROR_CHECK(led_strip_new_rmt_device(&strip_config, &rmt_config, &led_strip));
-#elif CONFIG_BLINK_LED_STRIP_BACKEND_SPI
-    led_strip_spi_config_t spi_config = {
-        .spi_bus = SPI2_HOST,
-        .flags.with_dma = true,
-    };
-    ESP_ERROR_CHECK(led_strip_new_spi_device(&strip_config, &spi_config, &led_strip));
-#else
-#error "unsupported LED strip backend"
-#endif
-    /* Set all LED off to clear all pixels */
-    led_strip_clear(led_strip);
-}
-
-#elif CONFIG_BLINK_LED_GPIO
-
-static void blink_led(void)
-{
-    /* Set the GPIO level according to the state (LOW or HIGH)*/
-    gpio_set_level(BLINK_GPIO, s_led_state);
-}
-
-static void configure_led(void)
-{
-    ESP_LOGI(TAG, "Example configured to blink GPIO LED!");
-    gpio_reset_pin(BLINK_GPIO);
-    /* Set the GPIO as a push/pull output */
-    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
-}
-
-#else
-#error "unsupported LED type"
-#endif
-
-void app_main(void)
-{
-
-    /* Configure the peripheral according to the LED type */
-    configure_led();
-
-    while (1) {
-        ESP_LOGI(TAG, "Turning the LED %s!", s_led_state == true ? "ON" : "OFF");
-        blink_led();
-        /* Toggle the LED state */
-        s_led_state = !s_led_state;
-        vTaskDelay(CONFIG_BLINK_PERIOD / portTICK_PERIOD_MS);
-    }
-}
+// * @endverbatim
+//*/
