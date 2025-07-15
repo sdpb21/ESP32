@@ -109,7 +109,7 @@ int32_t x;
      for( x = 0; x < NUM_TIMERS; x++ )
      {
          xTimers[ x ] = xTimerCreate(    "Timer",             // Just a text name, not used by the kernel.
-                                         ( 100 * ( x + 1 ) ), // The timer period in ticks.
+                                         (5000 / portTICK_PERIOD_MS), // The timer period in ticks (5 seconds).
                                          pdTRUE,              // The timers will auto-reload themselves when they expire.
                                          ( void * ) x,        // Assign each timer a unique id equal to its array index.
                                          vTimerCallback       // Each timer calls the same callback when it expires.
