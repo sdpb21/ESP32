@@ -20,15 +20,22 @@ void app_main(void)
 /*
   delay(500);      //  a half second delay
   servo1.write(90); // sets the servo angle to 90 degrees
-
+*/
+  vTaskDelay(500 / portTICK_PERIOD_MS);   // 1/2 second delay
+/*
   delay(500);      // a half second delay
   servo1.write(180);// sets the servo angle to 180 degrees
-
+*/
+  vTaskDelay(500 / portTICK_PERIOD_MS);   // 1/2 second delay
+/*
   delay(500);      // a half second delay
   servo1.write(90); // sets the servo angle to 90 degrees
-
+*/
+  vTaskDelay(500 / portTICK_PERIOD_MS);   // 1/2 second delay
+/*
   delay(500);      // a half second delay
   servo1.write(0);  // sets the servo angle to 0 degrees
 */
-
+  vTaskDelay(500 / portTICK_PERIOD_MS);   // 1/2 second delay
+  
 }
