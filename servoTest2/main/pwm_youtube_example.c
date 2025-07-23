@@ -40,10 +40,12 @@ esp_err_t set_timer(void){
 
 esp_err_t set_pwm(void){
     
+    // channel configure structures declaration
     ledc_channel_config_t channelConfigR = {0};
     ledc_channel_config_t channelConfigG = {0};
     ledc_channel_config_t channelConfigB = {0};
 
+    // channel R structure initialization
     channelConfigR.gpio_num = 33;
     channelConfigR.speed_mode = LEDC_HIGH_SPEED_MODE;
     channelConfigR.channel = LEDC_CHANNEL_0;
@@ -51,6 +53,7 @@ esp_err_t set_pwm(void){
     channelConfigR.timer_sel = LEDC_TIMER_0;
     channelConfigR.duty = 0;
 
+    // channel G structure initialization
     channelConfigG.gpio_num = 25;
     channelConfigG.speed_mode = LEDC_HIGH_SPEED_MODE;
     channelConfigG.channel = LEDC_CHANNEL_1;
@@ -58,12 +61,30 @@ esp_err_t set_pwm(void){
     channelConfigG.timer_sel = LEDC_TIMER_0;
     channelConfigG.duty = 0;
 
+    // channel B structure initialization
     channelConfigB.gpio_num = 26;
     channelConfigB.speed_mode = LEDC_HIGH_SPEED_MODE;
     channelConfigB.channel = LEDC_CHANNEL_2;
     channelConfigB.intr_type = LEDC_INTR_DISABLE;
     channelConfigB.timer_sel = LEDC_TIMER_0;
     channelConfigB.duty = 0;
+
+    // PWM channels configurations
+    ledc_channel_config( &channelConfigR );
+    ledc_channel_config( &channelConfigG );
+    ledc_channel_config( &channelConfigB );
+
+    // timer config structure declaration
+    ledc_timer_config_t timerConfig = {0};
+
+    // timerConfig structure fields initialization
+    timerConfig.speed_mode = LEDC_HIGH_SPEED_MODE;
+    timerConfig.duty_resolution = LEDC_TIMER_10_BIT;
+    timerConfig.timer_num = LEDC_TIMER_0;
+    timerConfig.freq_hz = 20000;    // 20kHz
+
+    // PWM timer configuration
+    ledc_timer_config( &timerConfig );
 
     return ESP_OK;
 }
