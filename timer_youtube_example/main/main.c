@@ -8,13 +8,17 @@
 
 uint8_t led_level = 0;
 TimerHandle_t xTimers;
+int interval = 100;     // time for delay in ms
+int timerId = 1;
 
 esp_err_t init_led(void);
 esp_err_t blink_led(void);
 esp_err_t set_timer(void);
 
 void vTimerCallback( TimerHandle_t pxTimer){
-    //
+    
+    blink_led();
+    
 }
 
 void app_main(void)
@@ -44,11 +48,11 @@ esp_err_t blink_led(void)
 esp_err_t set_timer(void)
 {
 
-    xTimers = xTimerCreate("Timer",         // Just a text name, not used by the kernel.
-                           (100 * (x + 1)), // The timer period in ticks.
-                           pdTRUE,          // The timers will auto-reload themselves when they expire.
-                           (void *)x,       // Assign each timer a unique id equal to its array index.
-                           vTimerCallback   // Each timer calls the same callback when it expires.
+    xTimers = xTimerCreate("Timer",                     // Just a text name, not used by the kernel.
+                           ( pdMS_TO_TICKS(interval)),  // The timer period in ticks.
+                           pdTRUE,                      // The timers will auto-reload themselves when they expire.
+                           (void *)timerId,             // Assign each timer a unique id equal to its array index.
+                           vTimerCallback               // Each timer calls the same callback when it expires.
     );
 
     if (xTimers == NULL)
@@ -60,7 +64,7 @@ esp_err_t set_timer(void)
         // Start the timer.  No block time is specified, and even if one was
         // it would be ignored because the scheduler has not yet been
         // started.
-        if (xTimerStart(xTimers, 0) != pdPASS)
+        if (xTimerStart(xTimers, 0) != pdPASS)  // this line starts the timer
         {
             // The timer could not be set into the Active state.
         }
