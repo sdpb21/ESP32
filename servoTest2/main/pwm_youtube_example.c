@@ -50,7 +50,12 @@ void app_main(void){
 }
 
 esp_err_t init_led(void){
-    //
+    
+    gpio_reset_pin(led1);
+    gpio_set_direction(led1, GPIO_MODE_OUTPUT);
+
+    return ESP_OK;
+    
 }
 
 esp_err_t blink_led(void){
