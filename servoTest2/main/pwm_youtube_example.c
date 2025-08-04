@@ -64,11 +64,35 @@ esp_err_t blink_led(void){
     gpio_set_level(led1, led_level);
 
     return ESP_OK;
-    
+
 }
 
 esp_err_t set_timer(void){
-    //
+    
+    xTimers = xTimerCreate("Timer",                     // Just a text name, not used by the kernel.
+                           ( pdMS_TO_TICKS(interval)),  // The timer period in ticks.
+                           pdTRUE,                      // The timers will auto-reload themselves when they expire.
+                           (void *)timerId,             // Assign each timer a unique id equal to its array index.
+                           vTimerCallback               // Each timer calls the same callback when it expires.
+    );
+
+    if (xTimers == NULL)
+    {
+        // The timer was not created.
+    }
+    else
+    {
+        // Start the timer.  No block time is specified, and even if one was
+        // it would be ignored because the scheduler has not yet been
+        // started.
+        if (xTimerStart(xTimers, 0) != pdPASS)  // this line starts the timer
+        {
+            // The timer could not be set into the Active state.
+        }
+    }
+
+    return ESP_OK;
+    
 }
 
 esp_err_t set_pwm(void){
