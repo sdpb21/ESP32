@@ -55,11 +55,16 @@ esp_err_t init_led(void){
     gpio_set_direction(led1, GPIO_MODE_OUTPUT);
 
     return ESP_OK;
-    
+
 }
 
 esp_err_t blink_led(void){
-    //
+    
+    led_level = !led_level;
+    gpio_set_level(led1, led_level);
+
+    return ESP_OK;
+    
 }
 
 esp_err_t set_timer(void){
